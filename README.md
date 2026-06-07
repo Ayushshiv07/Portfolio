@@ -1,4 +1,4 @@
-# 🌌 Cyberpunk Developer Portfolio
+# Cyberpunk Developer Portfolio
 
 A visually stunning, highly interactive, dark-themed developer portfolio website inspired by the retro-futuristic aesthetic of *Cyberpunk 2077*. Built for **Ayush Anand** — Data Analyst & AI Engineer.
 

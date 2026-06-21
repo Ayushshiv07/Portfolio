@@ -94,7 +94,7 @@
             mouse.y = e.clientY;
             
             // Move dot instantly using GPU-accelerated transform
-            curDot.style.transform = `translate(${mouse.x - 4}px, ${mouse.y - 4}px)`;
+            curDot.style.transform = `translate(${mouse.x}px, ${mouse.y}px)`;
         });
 
         // Lerp outer ring — faster factor = less lag on triangle
@@ -104,7 +104,7 @@
             ringPos.y += (mouse.y - ringPos.y) * lerpFactor;
 
             // Use GPU-accelerated transform (no left/top layout reflow)
-            curRing.style.transform = `translate(${ringPos.x - 22}px, ${ringPos.y - 22}px)`;
+            curRing.style.transform = `translate(${ringPos.x}px, ${ringPos.y}px)`;
 
             requestAnimationFrame(animateRing);
         }

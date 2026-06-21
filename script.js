@@ -397,3 +397,130 @@
                 c.style.setProperty('--py', `${y}%`);
             });
         });
+
+        /* ── DYNAMIC DATA PIPELINE BACKGROUND CANVAS ── */
+        const pipeCanvas = document.getElementById('pipeline-canvas');
+        const pipeCtx = pipeCanvas.getContext('2d');
+
+        let pipelines = [];
+        let packets = [];
+        const gridSpacing = 80;
+
+        function resizePipeline() {
+            pipeCanvas.width = window.innerWidth;
+            pipeCanvas.height = window.innerHeight;
+            
+            pipelines = [];
+            packets = [];
+            
+            const cols = Math.ceil(pipeCanvas.width / gridSpacing);
+            const rows = Math.ceil(pipeCanvas.height / gridSpacing);
+            
+            // Create horizontal pipeline lines
+            for (let r = 1; r < rows; r++) {
+                if (Math.random() > 0.25) {
+                    pipelines.push({
+                        type: 'h',
+                        y: r * gridSpacing,
+                        startX: 0,
+                        endX: pipeCanvas.width,
+                        color: Math.random() > 0.5 ? 'rgba(0, 200, 255, 0.03)' : 'rgba(124, 58, 237, 0.03)'
+                    });
+                    
+                    const numPackets = Math.floor(Math.random() * 2) + 1;
+                    for (let p = 0; p < numPackets; p++) {
+                        packets.push({
+                            type: 'h',
+                            y: r * gridSpacing,
+                            x: Math.random() * pipeCanvas.width,
+                            speed: (0.4 + Math.random() * 0.9) * (Math.random() > 0.5 ? 1 : -1),
+                            color: Math.random() > 0.6 ? '#06ffa5' : (Math.random() > 0.5 ? '#00c8ff' : '#7c3aed'),
+                            size: 1.2 + Math.random() * 1.2
+                        });
+                    }
+                }
+            }
+            
+            // Create vertical pipeline lines
+            for (let c = 1; c < cols; c++) {
+                if (Math.random() > 0.25) {
+                    pipelines.push({
+                        type: 'v',
+                        x: c * gridSpacing,
+                        startY: 0,
+                        endY: pipeCanvas.height,
+                        color: Math.random() > 0.5 ? 'rgba(0, 200, 255, 0.03)' : 'rgba(6, 255, 165, 0.03)'
+                    });
+                    
+                    const numPackets = Math.floor(Math.random() * 2) + 1;
+                    for (let p = 0; p < numPackets; p++) {
+                        packets.push({
+                            type: 'v',
+                            x: c * gridSpacing,
+                            y: Math.random() * pipeCanvas.height,
+                            speed: (0.4 + Math.random() * 0.9) * (Math.random() > 0.5 ? 1 : -1),
+                            color: Math.random() > 0.6 ? '#06ffa5' : (Math.random() > 0.5 ? '#00c8ff' : '#7c3aed'),
+                            size: 1.2 + Math.random() * 1.2
+                        });
+                    }
+                }
+            }
+        }
+
+        function drawPipeline() {
+            pipeCtx.clearRect(0, 0, pipeCanvas.width, pipeCanvas.height);
+            
+            // Draw lines
+            pipelines.forEach(pipe => {
+                pipeCtx.strokeStyle = pipe.color;
+                pipeCtx.lineWidth = 1;
+                pipeCtx.beginPath();
+                if (pipe.type === 'h') {
+                    pipeCtx.moveTo(pipe.startX, pipe.y);
+                    pipeCtx.lineTo(pipe.endX, pipe.y);
+                } else {
+                    pipeCtx.moveTo(pipe.x, pipe.startY);
+                    pipeCtx.lineTo(pipe.x, pipe.endY);
+                }
+                pipeCtx.stroke();
+            });
+            
+            // Draw flowing data packets
+            packets.forEach(packet => {
+                pipeCtx.fillStyle = packet.color;
+                pipeCtx.shadowColor = packet.color;
+                pipeCtx.shadowBlur = 6;
+                
+                pipeCtx.beginPath();
+                pipeCtx.arc(packet.x, packet.y, packet.size, 0, Math.PI * 2);
+                pipeCtx.fill();
+                
+                pipeCtx.shadowBlur = 0; // reset
+                
+                pipeCtx.globalAlpha = 0.35;
+                pipeCtx.beginPath();
+                if (packet.type === 'h') {
+                    pipeCtx.arc(packet.x - packet.speed * 4, packet.y, packet.size * 0.75, 0, Math.PI * 2);
+                    pipeCtx.arc(packet.x - packet.speed * 8, packet.y, packet.size * 0.5, 0, Math.PI * 2);
+                    packet.x += packet.speed;
+                    
+                    if (packet.x > pipeCanvas.width) packet.x = 0;
+                    if (packet.x < 0) packet.x = pipeCanvas.width;
+                } else {
+                    pipeCtx.arc(packet.x, packet.y - packet.speed * 4, packet.size * 0.75, 0, Math.PI * 2);
+                    pipeCtx.arc(packet.x, packet.y - packet.speed * 8, packet.size * 0.5, 0, Math.PI * 2);
+                    packet.y += packet.speed;
+                    
+                    if (packet.y > pipeCanvas.height) packet.y = 0;
+                    if (packet.y < 0) packet.y = pipeCanvas.height;
+                }
+                pipeCtx.fill();
+                pipeCtx.globalAlpha = 1.0;
+            });
+            
+            requestAnimationFrame(drawPipeline);
+        }
+
+        resizePipeline();
+        drawPipeline();
+        window.addEventListener('resize', resizePipeline, { passive: true });

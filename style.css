@@ -150,6 +150,14 @@
             pointer-events: none;
         }
 
+        #pipeline-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 1.5;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
         /* Hero Blur Orbs */
         .orb {
             position: absolute;
@@ -1914,6 +1922,17 @@
         .d4 { transition-delay: 0.35s; }
         .d5 { transition-delay: 0.45s; }
         .d6 { transition-delay: 0.55s; }
+
+        /* ════════════════════════════════════════════════
+           GLOBAL SECTION BACKGROUNDS (TRANSPARENT + BLUR)
+        ════════════════════════════════════════════════ */
+        #about, #skills, #experience, #projects, #certifications, #contact {
+            background: rgba(3, 6, 15, 0.72) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 200, 255, 0.03);
+            border-top: 1px solid rgba(0, 200, 255, 0.03);
+        }
 
         /* ════════════════════════════════════════════════
            RESPONSIVE DESIGN (breakpoint 960px)

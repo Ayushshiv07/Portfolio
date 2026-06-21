@@ -94,7 +94,7 @@
             mouse.y = e.clientY;
             
             // Move dot instantly using GPU-accelerated transform
-            curDot.style.transform = `translate(${mouse.x}px, ${mouse.y}px)`;
+            curDot.style.transform = `translate3d(${mouse.x}px, ${mouse.y}px, 0) translate3d(-50%, -50%, 0)`;
         });
 
         // Lerp outer ring — faster factor = less lag on triangle
@@ -104,7 +104,7 @@
             ringPos.y += (mouse.y - ringPos.y) * lerpFactor;
 
             // Use GPU-accelerated transform (no left/top layout reflow)
-            curRing.style.transform = `translate(${ringPos.x}px, ${ringPos.y}px)`;
+            curRing.style.transform = `translate3d(${ringPos.x}px, ${ringPos.y}px, 0) translate3d(-50%, -50%, 0)`;
 
             requestAnimationFrame(animateRing);
         }
@@ -120,7 +120,7 @@
         const mCanvas = document.getElementById('matrix-canvas');
         const mCtx = mCanvas.getContext('2d');
         
-        const maxCols = 120;
+        const maxCols = 50;
         let drops = [];
         const matrixChars = "01SELECTFROMWHEREJOINGROUPBYETLSQLPYTHONDATAPIPELINETRANSFORMLOADVALIDATEAIRFLOWSTARMODELINGEST".split("");
         const matrixColors = ["#00c8ff", "#06ffa5", "#00ffcc", "#ff6b35"];
@@ -135,7 +135,7 @@
                 drops.push({
                     x: i * colWidth,
                     y: Math.random() * -mCanvas.height,
-                    speed: 1 + Math.random() * 2.5,
+                    speed: 0.3 + Math.random() * 0.7,
                     charIndex: Math.floor(Math.random() * matrixChars.length),
                     color: matrixColors[Math.floor(Math.random() * matrixColors.length)],
                     opacity: 0.1 + Math.random() * 0.4
@@ -157,7 +157,7 @@
                 mCtx.fillText(char, drop.x, drop.y);
                 mCtx.globalAlpha = 1.0;
 
-                drop.y += drop.speed * 4;
+                drop.y += drop.speed * 1.2;
                 drop.charIndex = (drop.charIndex + 1) % matrixChars.length;
 
                 if (drop.y > mCanvas.height) {
@@ -177,14 +177,14 @@
         
         let particles = [];
         const particleColors = ['#00c8ff', '#7c3aed', '#06ffa5'];
-        const maxConnectionDist = 100;
+        const maxConnectionDist = 75;
 
         function resizeParticles() {
             pCanvas.width = window.innerWidth;
             pCanvas.height = window.innerHeight;
             
             particles = [];
-            for (let i = 0; i < 120; i++) {
+            for (let i = 0; i < 45; i++) {
                 particles.push({
                     x: Math.random() * pCanvas.width,
                     y: Math.random() * pCanvas.height,
@@ -237,7 +237,7 @@
                     const dist = Math.sqrt(dx * dx + dy * dy);
 
                     if (dist < maxConnectionDist) {
-                        const alpha = (1 - dist / maxConnectionDist) * Math.sin(p1.life * Math.PI) * Math.sin(p2.life * Math.PI) * 0.15;
+                        const alpha = (1 - dist / maxConnectionDist) * Math.sin(p1.life * Math.PI) * Math.sin(p2.life * Math.PI) * 0.06;
                         pCtx.strokeStyle = p1.color;
                         pCtx.lineWidth = 0.5;
                         pCtx.beginPath();
@@ -404,7 +404,7 @@
 
         let pipelines = [];
         let packets = [];
-        const gridSpacing = 80;
+        const gridSpacing = 120;
 
         function resizePipeline() {
             pipeCanvas.width = window.innerWidth;
@@ -418,16 +418,16 @@
             
             // Create horizontal pipeline lines
             for (let r = 1; r < rows; r++) {
-                if (Math.random() > 0.25) {
+                if (Math.random() > 0.70) {
                     pipelines.push({
                         type: 'h',
                         y: r * gridSpacing,
                         startX: 0,
                         endX: pipeCanvas.width,
-                        color: Math.random() > 0.5 ? 'rgba(0, 200, 255, 0.03)' : 'rgba(124, 58, 237, 0.03)'
+                        color: Math.random() > 0.5 ? 'rgba(0, 200, 255, 0.015)' : 'rgba(124, 58, 237, 0.015)'
                     });
                     
-                    const numPackets = Math.floor(Math.random() * 2) + 1;
+                    const numPackets = Math.random() > 0.5 ? 1 : 0;
                     for (let p = 0; p < numPackets; p++) {
                         packets.push({
                             type: 'h',
@@ -443,16 +443,16 @@
             
             // Create vertical pipeline lines
             for (let c = 1; c < cols; c++) {
-                if (Math.random() > 0.25) {
+                if (Math.random() > 0.70) {
                     pipelines.push({
                         type: 'v',
                         x: c * gridSpacing,
                         startY: 0,
                         endY: pipeCanvas.height,
-                        color: Math.random() > 0.5 ? 'rgba(0, 200, 255, 0.03)' : 'rgba(6, 255, 165, 0.03)'
+                        color: Math.random() > 0.5 ? 'rgba(0, 200, 255, 0.015)' : 'rgba(6, 255, 165, 0.015)'
                     });
                     
-                    const numPackets = Math.floor(Math.random() * 2) + 1;
+                    const numPackets = Math.random() > 0.5 ? 1 : 0;
                     for (let p = 0; p < numPackets; p++) {
                         packets.push({
                             type: 'v',
@@ -556,7 +556,7 @@
                 renderer.setClearAlpha(0.0);
 
                 // 4. Data network variables
-                const nodesCount = 65;
+                const nodesCount = 30;
                 const nodes = [];
                 const boxSize = 380;
 
@@ -602,12 +602,12 @@
                 const lineMat = new THREE.LineBasicMaterial({
                     color: 0x7c3aed,
                     transparent: true,
-                    opacity: 0.18,
+                    opacity: 0.10,
                     blending: THREE.AdditiveBlending
                 });
                 
                 // Connect nodes that are close to each other
-                const maxDistance = 110;
+                const maxDistance = 90;
                 for (let i = 0; i < nodesCount; i++) {
                     for (let j = i + 1; j < nodesCount; j++) {
                         const dist = nodes[i].position.distanceTo(nodes[j].position);
@@ -619,7 +619,7 @@
                 }
 
                 // Initialize packet paths
-                const packetsCount = 30;
+                const packetsCount = 10;
                 const packets = [];
                 const packetGeometry = new THREE.SphereGeometry(1.2, 8, 8);
                 const packetMaterials = [

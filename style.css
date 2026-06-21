@@ -63,15 +63,13 @@
             left: 0;
             width: 8px;
             height: 8px;
-            margin-left: -4px;
-            margin-top: -4px;
             background: var(--cyan);
             border-radius: 50%;
             pointer-events: none;
             z-index: 99999;
             will-change: transform;
             box-shadow: var(--glow-cyan);
-            transition: width 0.15s, height 0.15s, margin 0.15s, background-color 0.2s, box-shadow 0.2s;
+            transition: width 0.15s, height 0.15s, background-color 0.2s, box-shadow 0.2s;
         }
 
         #cursor-ring {
@@ -80,12 +78,10 @@
             left: 0;
             width: 44px;
             height: 44px;
-            margin-left: -22px;
-            margin-top: -22px;
             pointer-events: none;
             z-index: 99998;
             will-change: transform;
-            transition: width 0.25s ease, height 0.25s ease, margin 0.25s ease;
+            transition: width 0.25s ease, height 0.25s ease;
             overflow: visible;
         }
 
@@ -104,8 +100,6 @@
         body.hovering #cursor-dot {
             width: 14px;
             height: 14px;
-            margin-left: -7px;
-            margin-top: -7px;
             background-color: var(--violet);
             box-shadow: var(--glow-violet);
         }
@@ -114,8 +108,6 @@
         body.hovering #cursor-ring {
             width: 56px;
             height: 56px;
-            margin-left: -28px;
-            margin-top: -28px;
         }
 
         body.hovering #cursor-ring .cursor-triangle {
@@ -148,7 +140,7 @@
             inset: 0;
             z-index: -4;
             pointer-events: none;
-            opacity: 0.45;
+            opacity: 0.08;
         }
 
         #particle-canvas {

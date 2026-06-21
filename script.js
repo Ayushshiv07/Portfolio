@@ -524,3 +524,215 @@
         resizePipeline();
         drawPipeline();
         window.addEventListener('resize', resizePipeline, { passive: true });
+
+        /* ── THREE.JS 3D DATA PIPELINE NETWORK ── */
+        (function() {
+            const canvas = document.getElementById('three-canvas');
+            if (!canvas) return;
+
+            // 1. Scene setup
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x03060f, 0.0018);
+
+            // 2. Camera setup
+            const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.z = 250;
+
+            // 3. Renderer setup
+            const renderer = new THREE.WebGLRenderer({
+                canvas: canvas,
+                alpha: true,
+                antialias: true
+            });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            // 4. Data network variables
+            const nodesCount = 65;
+            const nodes = [];
+            const boxSize = 380;
+
+            // Generate random 3D nodes
+            for (let i = 0; i < nodesCount; i++) {
+                nodes.push({
+                    position: new THREE.Vector3(
+                        (Math.random() - 0.5) * boxSize,
+                        (Math.random() - 0.5) * boxSize,
+                        (Math.random() - 0.5) * boxSize
+                    ),
+                    velocity: new THREE.Vector3(
+                        (Math.random() - 0.5) * 0.12,
+                        (Math.random() - 0.5) * 0.12,
+                        (Math.random() - 0.5) * 0.12
+                    ),
+                    connections: []
+                });
+            }
+
+            // Create node geometry & points
+            const pointGeo = new THREE.BufferGeometry();
+            const positions = new Float32Array(nodesCount * 3);
+            for (let i = 0; i < nodesCount; i++) {
+                positions[i * 3] = nodes[i].position.x;
+                positions[i * 3 + 1] = nodes[i].position.y;
+                positions[i * 3 + 2] = nodes[i].position.z;
+            }
+            pointGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            // Create glowing material for nodes
+            const pointMat = new THREE.PointsMaterial({
+                color: 0x00c8ff,
+                size: 4,
+                transparent: true,
+                opacity: 0.85,
+                blending: THREE.AdditiveBlending
+            });
+            const pointSystem = new THREE.Points(pointGeo, pointMat);
+            scene.add(pointSystem);
+
+            // Create lines connection geometry
+            const lineMat = new THREE.LineBasicMaterial({
+                color: 0x7c3aed,
+                transparent: true,
+                opacity: 0.18,
+                blending: THREE.AdditiveBlending
+            });
+            
+            // Connect nodes that are close to each other
+            const maxDistance = 110;
+            for (let i = 0; i < nodesCount; i++) {
+                for (let j = i + 1; j < nodesCount; j++) {
+                    const dist = nodes[i].position.distanceTo(nodes[j].position);
+                    if (dist < maxDistance) {
+                        nodes[i].connections.push(j);
+                        nodes[j].connections.push(i);
+                    }
+                }
+            }
+
+            // Initialize packet paths
+            const packetsCount = 30;
+            const packets = [];
+            const packetGeometry = new THREE.SphereGeometry(1.2, 8, 8);
+            const packetMaterials = [
+                new THREE.MeshBasicMaterial({ color: 0x06ffa5, transparent: true, opacity: 0.95 }),
+                new THREE.MeshBasicMaterial({ color: 0x00c8ff, transparent: true, opacity: 0.95 }),
+                new THREE.MeshBasicMaterial({ color: 0x7c3aed, transparent: true, opacity: 0.95 })
+            ];
+
+            for (let i = 0; i < packetsCount; i++) {
+                // Find a node with connections
+                let startNodeIndex = Math.floor(Math.random() * nodesCount);
+                while (nodes[startNodeIndex].connections.length === 0) {
+                    startNodeIndex = Math.floor(Math.random() * nodesCount);
+                }
+                
+                const startNode = nodes[startNodeIndex];
+                const destNodeIndex = startNode.connections[Math.floor(Math.random() * startNode.connections.length)];
+                
+                const mesh = new THREE.Mesh(packetGeometry, packetMaterials[Math.floor(Math.random() * packetMaterials.length)]);
+                scene.add(mesh);
+
+                packets.push({
+                    mesh: mesh,
+                    startNode: startNodeIndex,
+                    endNode: destNodeIndex,
+                    progress: Math.random(),
+                    speed: 0.004 + Math.random() * 0.007
+                });
+            }
+
+            // Dynamic line geometry setup
+            const lineGeo = new THREE.BufferGeometry();
+            scene.add(new THREE.LineSegments(lineGeo, lineMat));
+
+            // Mouse tracking
+            let mouseX = 0, mouseY = 0;
+            let targetX = 0, targetY = 0;
+            
+            window.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX - window.innerWidth / 2) * 0.08;
+                mouseY = (e.clientY - window.innerHeight / 2) * 0.08;
+            });
+
+            // Scroll camera tracking
+            let scrollY = 0;
+            window.addEventListener('scroll', () => {
+                scrollY = window.scrollY;
+            }, { passive: true });
+
+            // Window resize handler
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            // Animation loop
+            function animate(time) {
+                requestAnimationFrame(animate);
+
+                // 1. Update nodes positions (floating movement)
+                const posAttr = pointGeo.getAttribute('position');
+                const linePositionsArray = [];
+
+                for (let i = 0; i < nodesCount; i++) {
+                    const node = nodes[i];
+                    node.position.add(node.velocity);
+
+                    // Bounce off boundary limits
+                    if (Math.abs(node.position.x) > boxSize / 2) node.velocity.x *= -1;
+                    if (Math.abs(node.position.y) > boxSize / 2) node.velocity.y *= -1;
+                    if (Math.abs(node.position.z) > boxSize / 2) node.velocity.z *= -1;
+
+                    posAttr.setXYZ(i, node.position.x, node.position.y, node.position.z);
+                }
+                posAttr.needsUpdate = true;
+
+                // 2. Recalculate dynamic line connections
+                for (let i = 0; i < nodesCount; i++) {
+                    const node = nodes[i];
+                    node.connections.forEach(connIdx => {
+                        if (i < connIdx) {
+                            linePositionsArray.push(
+                                node.position.x, node.position.y, node.position.z,
+                                nodes[connIdx].position.x, nodes[connIdx].position.y, nodes[connIdx].position.z
+                            );
+                        }
+                    });
+                }
+                lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(linePositionsArray, 3));
+
+                // 3. Update packets flowing along connections
+                packets.forEach(packet => {
+                    packet.progress += packet.speed;
+                    if (packet.progress >= 1) {
+                        packet.progress = 0;
+                        packet.startNode = packet.endNode;
+                        const currNode = nodes[packet.startNode];
+                        if (currNode.connections.length > 0) {
+                            packet.endNode = currNode.connections[Math.floor(Math.random() * currNode.connections.length)];
+                        }
+                    }
+
+                    const start = nodes[packet.startNode].position;
+                    const end = nodes[packet.endNode].position;
+                    packet.mesh.position.lerpVectors(start, end, packet.progress);
+                });
+
+                // 4. Smooth camera parallax
+                targetX += (mouseX - targetX) * 0.05;
+                targetY += (mouseY - targetY) * 0.05;
+
+                const rotAngle = time * 0.00008;
+                camera.position.x = Math.sin(rotAngle) * (260 + targetX) + Math.cos(rotAngle) * targetY * 0.2;
+                camera.position.y = Math.cos(rotAngle) * (260 + targetY) + Math.sin(rotAngle) * targetX * 0.2;
+                camera.position.z = Math.cos(rotAngle) * 260 + (scrollY * 0.06);
+
+                camera.lookAt(scene.position);
+
+                renderer.render(scene, camera);
+            }
+
+            requestAnimationFrame(animate);
+        })();

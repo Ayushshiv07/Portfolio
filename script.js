@@ -111,7 +111,7 @@
         animateRing();
 
         // Hover scale effects
-        document.querySelectorAll('a, button, .proj-card, .clink, .cert-card, .sk-cat, .skill-bar-card, .nav-burger').forEach(el => {
+        document.querySelectorAll('a, button, .proj-card, .clink, .cert-card, .sk-cat, .skill-bar-card, .nav-burger, .profile-card').forEach(el => {
             el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
             el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
         });

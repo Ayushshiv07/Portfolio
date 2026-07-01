@@ -43,7 +43,9 @@
     <canvas id="three-canvas"></canvas>
 
     <!-- 2. Custom Cursor -->
-    <div id="cursor-dot"></div>
+    <div id="cursor-dot-wrap">
+        <div id="cursor-dot"></div>
+    </div>
     <svg id="cursor-ring" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
         <polygon class="cursor-triangle" points="22,0 40,33 4,33" fill="none" stroke="rgba(0,200,255,0.55)" stroke-width="1.5" stroke-linejoin="round"/>
         <circle class="cursor-circle" cx="22" cy="22" r="19" fill="none" stroke="rgba(124,58,237,0.7)" stroke-width="1.5"/>
@@ -157,7 +159,7 @@
                             <div class="hstat-l">Students Led</div>
                         </div>
                         <div class="hstat">
-                            <div class="hstat-n" data-target="5">0</div>
+                            <div class="hstat-n" data-target="6">0</div>
                             <div class="hstat-l">Projects</div>
                         </div>
                         <div class="hstat">
@@ -609,10 +611,58 @@
                     </div>
                 </div>
 
-                <!-- PROJECT 02 -->
-                <div class="proj-card reveal d2">
+                <!-- FEATURED PROJECT 02 -->
+                <div class="proj-card proj-featured reveal d2">
                     <div class="proj-card-glow"></div>
-                    <div class="proj-num">PROJECT_02</div>
+                    <div class="proj-num">PROJECT_02 · FEATURED</div>
+                    <div class="proj-featured-inner">
+                        <div>
+                            <div class="proj-icon-wrap">🔍</div>
+                            <div class="proj-title">Spot the Fake Photo</div>
+                            <p class="proj-desc">Explainable image authenticity station distinguishing real photographs from recaptured screen photos (screenshots/recaptures) with low-latency signal-processing.</p>
+                            <div class="proj-flow">
+                                <span class="pf-node">IMAGE</span><span class="pf-arr">→</span>
+                                <span class="pf-node">PATCHES</span><span class="pf-arr">→</span>
+                                <span class="pf-node">FFT/SPATIAL</span><span class="pf-arr">→</span>
+                                <span class="pf-node">CLASSIFIER</span><span class="pf-arr">→</span>
+                                <span class="pf-node">PREDICT</span>
+                            </div>
+                            <div class="proj-stack">
+                                <span class="stack-tag">Python</span>
+                                <span class="stack-tag">Random Forest</span>
+                                <span class="stack-tag">Three.js</span>
+                                <span class="stack-tag">Flask</span>
+                                <span class="stack-tag">Signal Processing</span>
+                            </div>
+                            <div class="proj-actions">
+                                <a href="https://github.com/Ayushshiv07/spot-the-fake" target="_blank" class="proj-btn gh">GitHub</a>
+                                <a href="https://spot-the-fake-nine.vercel.app" target="_blank" class="proj-btn demo">Live Demo</a>
+                            </div>
+                        </div>
+                        <div>
+                            <ul class="proj-pts" style="margin-bottom: 1.5rem;">
+                                <li>95.9% Leave-One-Out CV accuracy on recaptured screen fraud</li>
+                                <li>Classical signal-processing: 13 handcrafted spatial and frequency features</li>
+                                <li>3D WebGL Diagnostics Dashboard (Flask, Three.js, Vanilla-Tilt.js)</li>
+                                <li>Lazy patch cropping (512px) reducing CPU latency from 1.7s to ~514ms</li>
+                                <li>100% local, on-device execution with a 283 KB model footprint</li>
+                            </ul>
+                            <!-- 3D terrain ASCII representation -->
+                            <div style="padding:1.2rem; background:var(--bg); border:1px solid var(--border); border-radius:6px; font-family:var(--font-mono); font-size:0.63rem; color:var(--text3); line-height:1.6">
+                                <div style="color:var(--violet); margin-bottom:0.5rem">// 3D FFT FREQUENCY SPECTRUM</div>
+                                <div style="color:var(--green); margin-bottom:0.3rem">[Screen Recapture: Spiky peaks from pixel grids]</div>
+                                <div>       /\   /\</div>
+                                <div>   /\ /  \ /  \  /\</div>
+                                <div>__/__\/____\/____\/__\_ ◄ Moiré Artifacts</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROJECT 03 -->
+                <div class="proj-card reveal d3">
+                    <div class="proj-card-glow"></div>
+                    <div class="proj-num">PROJECT_03</div>
                     <div class="proj-icon-wrap">🧬</div>
                     <div class="proj-title">Brain Tumor Detection</div>
                     <p class="proj-desc">VGG16 transfer learning classification system detecting brain tumors on 3,000+ MRI images with clinical-grade GradCAM++ visual heatmaps for interpretability.</p>
@@ -641,10 +691,10 @@
                     </div>
                 </div>
 
-                <!-- PROJECT 03 -->
-                <div class="proj-card reveal d3">
+                <!-- PROJECT 04 -->
+                <div class="proj-card reveal d4">
                     <div class="proj-card-glow"></div>
-                    <div class="proj-num">PROJECT_03</div>
+                    <div class="proj-num">PROJECT_04</div>
                     <div class="proj-icon-wrap">🎮</div>
                     <div class="proj-title">ComicVerse Hub</div>
                     <p class="proj-desc">Fully responsive dynamic online comic store frontend. Sourced dynamic data, publisher filtering systems, and LocalStorage persistence for user carts.</p>
@@ -673,10 +723,10 @@
                     </div>
                 </div>
 
-                <!-- PROJECT 04 -->
-                <div class="proj-card reveal d4">
+                <!-- PROJECT 05 -->
+                <div class="proj-card reveal d5">
                     <div class="proj-card-glow"></div>
-                    <div class="proj-num">PROJECT_04</div>
+                    <div class="proj-num">PROJECT_05</div>
                     <div class="proj-icon-wrap">⛳</div>
                     <div class="proj-title">Sidcup Family Golf</div>
                     <p class="proj-desc">Redesigned dynamic landing page featuring custom cursor magnetic wrappers, CSS perspective properties, and GSAP ScrollTrigger timeline hooks.</p>
@@ -705,10 +755,10 @@
                     </div>
                 </div>
 
-                <!-- PROJECT 05 -->
-                <div class="proj-card reveal d5">
+                <!-- PROJECT 06 -->
+                <div class="proj-card reveal d6">
                     <div class="proj-card-glow"></div>
-                    <div class="proj-num">PROJECT_05</div>
+                    <div class="proj-num">PROJECT_06</div>
                     <div class="proj-icon-wrap">🚀</div>
                     <div class="proj-title">Nexa SaaS Landing Page</div>
                     <p class="proj-desc">Premium responsive SaaS template containing custom testimonials slider, accordion FAQs, and strategic conversion funnel design.</p>
